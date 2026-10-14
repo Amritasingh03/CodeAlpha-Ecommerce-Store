@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 30px 15px;
+        }
+        .card {
+            max-width: 420px;
+            margin: 30px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #ddd;
+        }
+        h1 { text-align: center; }
+        input {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0 15px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #0759c7;
+            color: white;
+            border: 0;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .error { color: #c62828; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>Customer Login</h1>
+
+    {% if form.errors %}
+        <p class="error">Username ya password sahi nahi hai.</p>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <label for="id_username">Username</label>
+        <input type="text" name="username" id="id_username"
+               autocomplete="username" required>
+
+        <label for="id_password">Password</label>
+        <input type="password" name="password" id="id_password"
+               autocomplete="current-password" required>
+
+        {% if next %}
+            <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
+
+        <button type="submit">Login</button>
+    </form>
+
+    <p>New customer?
+        <a href="{% url 'signup' %}">Create Account</a>
+    </p>
+    <p><a href="/">Back to Store</a></p>
+</div>
+</body>
+</html>

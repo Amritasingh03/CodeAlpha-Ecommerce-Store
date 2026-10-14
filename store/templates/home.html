@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amrita Singh Store</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f6fa;
+            color: #252538;
+            line-height: 1.6;
+        }
+
+        header {
+            background: #30205f;
+            color: white;
+            padding: 18px 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        header h1 {
+            font-size: 25px;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        #cart {
+            background: #ffcf56;
+            color: #30205f;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 75px 20px;
+            background: linear-gradient(135deg, #e9e4ff, #f9e7f3);
+        }
+
+        .hero h2 {
+            font-size: clamp(28px, 5vw, 42px);
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            margin-bottom: 22px;
+            color: #555;
+        }
+
+        .button, button {
+            background: #6347d9;
+            color: white;
+            border: none;
+            padding: 11px 18px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 15px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        button:hover, .button:hover {
+            background: #4931b0;
+        }
+
+        button:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+
+        .products {
+            padding: 45px 7%;
+        }
+
+        .products h2 {
+            text-align: center;
+            font-size: 30px;
+            margin-bottom: 28px;
+        }
+
+        .search-panel {
+            background: white;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px #00000012;
+        }
+
+        .search-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .search-form input,
+        .search-form select {
+            flex: 1;
+            min-width: 180px;
+            padding: 12px;
+            border: 1px solid #d5d2e5;
+            border-radius: 7px;
+            font-size: 15px;
+            background: white;
+        }
+
+        .search-form button {
+            min-width: 100px;
+        }
+
+        .clear-link {
+            display: inline-block;
+            margin-top: 12px;
+            color: #5137c3;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .result-count {
+            margin: 0 0 20px;
+            color: #555;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 22px;
+            box-shadow: 0 4px 15px #00000012;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+        }
+
+        .emoji {
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .card h3 {
+            margin-bottom: 8px;
+            overflow-wrap: anywhere;
+        }
+
+        .description {
+            color: #666;
+            margin-bottom: 12px;
+            overflow-wrap: anywhere;
+        }
+
+        .price {
+            color: #5137c3;
+            font-weight: bold;
+            font-size: 21px;
+            margin: 10px 0;
+        }
+
+        .stock {
+            color: #555;
+            margin-bottom: 14px;
+        }
+
+        .card form button {
+            width: 100%;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            background: white;
+            border-radius: 12px;
+            grid-column: 1 / -1;
+        }
+
+        footer {
+            background: #30205f;
+            color: white;
+            text-align: center;
+            padding: 22px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav {
+                justify-content: center;
+            }
+
+            .hero {
+                padding: 50px 15px;
+            }
+
+            .products {
+                padding: 30px 5%;
+            }
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .search-form input,
+            .search-form select,
+            .search-form button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Amrita Singh Store</h1>
+
+    <nav>
+        <a href="{% url 'home' %}">Home</a>
+        <a href="#products">Products</a>
+        <a href="{% url 'my_orders' %}">My Orders</a>
+
+        {% if user.is_authenticated %}
+            <span>Welcome, {{ user.username }}</span>
+            <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit">Logout</button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'signup' %}">Sign Up</a>
+        {% endif %}
+
+        <a href="{% url 'view_cart' %}" id="cart">
+            🛒 Cart: {{ cart_count|default:0 }}
+        </a>
+    </nav>
+</header>
+
+<section class="hero">
+    <h2>Welcome to Amrita Singh Store!</h2>
+    <p>Discover your favourites at great prices.</p>
+    <a href="#products" class="button">Explore Products</a>
+</section>
+
+<section class="products" id="products">
+    <h2>Featured Products</h2>
+
+    <!-- Product Search and Category Filter -->
+    <div class="search-panel">
+        <form method="get" action="{% url 'home' %}" class="search-form">
+            <input
+                type="text"
+                name="q"
+                placeholder="🔍 Search products by name or description..."
+                value="{{ search_query }}"
+                aria-label="Search products"
+            >
+
+            <select name="category" aria-label="Filter by category">
+                <option value="">All Categories</option>
+
+                {% for category in categories %}
+                    <option
+                        value="{{ category }}"
+                        {% if selected_category == category %}selected{% endif %}
+                    >
+                        {{ category }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Search</button>
+        </form>
+
+        {% if search_query or selected_category %}
+            <a href="{% url 'home' %}" class="clear-link">✖ Clear Search & Filters</a>
+        {% endif %}
+    </div>
+
+    {% if search_query or selected_category %}
+        <p class="result-count">
+            Search results
+            {% if search_query %}for "{{ search_query }}"{% endif %}
+            {% if selected_category %}in {{ selected_category }}{% endif %}
+        </p>
+    {% endif %}
+
+    <div class="grid">
+        {% for product in products %}
+            <div class="card">
+                <div class="emoji">
+                    {% if product.image_url %}
+                        <img
+                            src="{{ product.image_url }}"
+                            alt="{{ product.name }}"
+                            loading="lazy"
+                            style="width:100%;height:160px;object-fit:contain;"
+                        >
+                    {% else %}
+                        🛍️
+                    {% endif %}
+                </div>
+
+                <h3>{{ product.name }}</h3>
+
+                <p class="description">
+                    {{ product.description }}
+                </p>
+
+                <p class="price">₹{{ product.price }}</p>
+                <p class="stock">Stock: {{ product.stock }}</p>
+
+                <form method="post" action="{% url 'add_to_cart' product.id %}">
+                    {% csrf_token %}
+                    <button
+                        type="submit"
+                        {% if product.stock == 0 %}disabled{% endif %}
+                    >
+                        {% if product.stock == 0 %}
+                            Out of Stock
+                        {% else %}
+                            Add to Cart
+                        {% endif %}
+                    </button>
+                </form>
+            </div>
+        {% empty %}
+            <p class="empty">
+                No matching products found. Try another search or clear the filters.
+            </p>
+        {% endfor %}
+    </div>
+</section>
+
+<footer>
+    © 2026 Amrita Singh Store | E-commerce Internship Project
+</footer>
+
+</body>
+</html>

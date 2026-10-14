@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 24px;
+        }
+        .container {
+            max-width: 750px;
+            margin: auto;
+        }
+        .card {
+            background: white;
+            padding: 24px;
+            margin-top: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px #ddd;
+        }
+        .status { font-weight: bold; color: #13804b; }
+        .cancelled { color: #c62828; }
+        .button {
+            display: inline-block;
+            padding: 10px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+        }
+        .back { background: #0759c7; color: white; }
+        .cancel { background: #c62828; color: white; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="{% url 'my_orders' %}">← Back to My Orders</a>
+
+    <div class="card">
+        <h1>Order #{{ order.id }}</h1>
+
+        <p><strong>Date:</strong>
+            {{ order.created_at|date:"d M Y, h:i A" }}
+        </p>
+        <p><strong>Name:</strong> {{ order.customer_name }}</p>
+        <p><strong>Phone:</strong> {{ order.phone }}</p>
+        <p><strong>Delivery Address:</strong> {{ order.address }}</p>
+        <p><strong>Total:</strong> ₹{{ order.total_amount }}</p>
+
+        <p>
+            <strong>Status:</strong>
+            <span class="{% if order.status == 'Cancelled' %}cancelled{% else %}status{% endif %}">
+                {{ order.status }}
+            </span>
+        </p>
+
+        <h2>Products</h2>
+        <ul>
+            {% for item in order.items.all %}
+            <li>
+                {{ item.product.name }} × {{ item.quantity }}
+                — ₹{{ item.price }} each
+            </li>
+            {% empty %}
+            <li>No products found.</li>
+            {% endfor %}
+        </ul>
+
+        {% if order.status == "Placed" %}
+        <form method="post"
+              action="{% url 'cancel_order' order.id %}"
+              onsubmit="return confirm('Are you sure you want to cancel this order?');">
+            {% csrf_token %}
+            <button type="submit" class="button cancel">
+                Cancel Order
+            </button>
+        </form>
+        {% endif %}
+
+        <p>
+            <a class="button back" href="/">Back to Store</a>
+        </p>
+    </div>
+</div>
+</body>
+</html>

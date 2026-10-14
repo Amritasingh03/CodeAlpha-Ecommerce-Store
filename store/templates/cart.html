@@ -1,0 +1,111 @@
+<!DOCTYPE html><html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart | My Store</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 25px 15px;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #222;
+        }
+        .container {
+            max-width: 850px;
+            margin: auto;
+        }
+        h1 { text-align: center; color: #243b6b; }
+        .card {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px #00000010;
+        }
+        .item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            padding: 18px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .item form { margin: 0; }
+        .remove {
+            padding: 8px 12px;
+            border: 0;
+            border-radius: 6px;
+            background: #dc3545;
+            color: white;
+            cursor: pointer;
+        }
+        .total {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 22px;
+            font-size: 22px;
+            font-weight: bold;
+        }
+        .button {
+            display: block;
+            margin-top: 15px;
+            padding: 14px;
+            border-radius: 8px;
+            text-align: center;
+            text-decoration: none;
+            background: #243b6b;
+            color: white;
+        }
+        .continue { background: #687386; }
+        .empty { text-align: center; padding: 35px 10px; }
+        @media (max-width: 500px) {
+            .item { align-items: flex-start; flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛒 Your Shopping Cart</h1>    <div class="card">
+        {% if items %}
+            {% for item in items %}
+                <div class="item">
+                    <div>
+                        <strong>{{ item.product.name }}</strong>
+                        <p>Price: ₹{{ item.product.price|floatformat:2 }}</p>
+                        <p>Quantity: {{ item.quantity }}</p>
+                        <strong>Subtotal: ₹{{ item.subtotal|floatformat:2 }}</strong>
+                    </div>
+
+                    <form method="POST"
+                          action="{% url 'remove_from_cart' item.product.id %}">
+                        {% csrf_token %}
+                        <button class="remove" type="submit">Remove</button>
+                    </form>
+                </div>
+            {% endfor %}
+
+            <div class="total">
+                <span>Total:</span>
+                <span>₹{{ total|floatformat:2 }}</span>
+            </div>
+
+            <a class="button" href="{% url 'checkout' %}">
+                Proceed to Checkout →
+            </a>
+        {% else %}
+            <div class="empty">
+                <h2>Your cart is empty</h2>
+                <p>Add some products before checking out.</p>
+            </div>
+        {% endif %}
+
+        <a class="button continue" href="{% url 'home' %}">
+            Continue Shopping
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

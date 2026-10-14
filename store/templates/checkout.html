@@ -1,0 +1,141 @@
+,<!DOCTYPE html><html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | My Store</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 25px 15px;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #222;
+        }
+        .container {
+            max-width: 850px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+        }
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px #00000010;
+        }
+        h1 { text-align: center; color: #243b6b; }
+        h2 { margin-top: 0; font-size: 21px; }
+        label {
+            display: block;
+            margin: 15px 0 6px;
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+        textarea { min-height: 100px; resize: vertical; }
+        .error {
+            background: #ffe6e6;
+            color: #b00020;
+            padding: 12px;
+            border-radius: 7px;
+        }
+        .item {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .total {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        button, .back {
+            display: block;
+            width: 100%;
+            margin-top: 18px;
+            padding: 13px;
+            border: 0;
+            border-radius: 7px;
+            background: #243b6b;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .back { background: #687386; }
+        @media (max-width: 650px) {
+            .container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Checkout</h1><div class="container">
+    <div class="card">
+        <h2>Delivery Details</h2>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <label for="customer_name">Full Name</label>
+            <input type="text" id="customer_name"
+                   name="customer_name" maxlength="150"
+                   value="{{ request.POST.customer_name }}"
+                   required>
+
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone"
+                   maxlength="15" minlength="7"
+                   value="{{ request.POST.phone }}"
+                   required>
+
+            <label for="address">Delivery Address</label>
+            <textarea id="address" name="address"
+                      maxlength="2000"
+                      required>{{ request.POST.address }}</textarea>
+
+            <button type="submit">Place Order</button>
+        </form>
+
+        <a class="back" href="{% url 'view_cart' %}">Back to Cart</a>
+    </div>
+
+    <div class="card">
+        <h2>Order Summary</h2>
+
+        {% for item in items %}
+            <div class="item">
+                <div>
+                    <strong>{{ item.product.name }}</strong><br>
+                    <small>Quantity: {{ item.quantity }}</small>
+                </div>
+                <span>₹{{ item.subtotal|floatformat:2 }}</span>
+            </div>
+        {% empty %}
+            <p>Your cart is empty.</p>
+        {% endfor %}
+
+        <div class="total">
+            <span>Total:</span>
+            <span>₹{{ total|floatformat:2 }}</span>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

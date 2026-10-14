@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 24px;
+        }
+        .container {
+            max-width: 850px;
+            margin: auto;
+        }
+        .order {
+            background: white;
+            padding: 20px;
+            margin: 16px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #ddd;
+        }
+        h1 { color: #222; }
+        .status { color: #13804b; font-weight: bold; }
+        a { color: #0759c7; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My Orders</h1>
+        <p><a href="/">← Back to Store</a></p>
+
+        {% for order in orders %}
+        <div class="order">
+            <h2>Order #{{ order.id }}</h2>
+            <p><strong>Date:</strong> {{ order.created_at|date:"d M Y, h:i A" }}</p>
+            <p><strong>Name:</strong> {{ order.customer_name }}</p>
+            <p><strong>Total:</strong> ₹{{ order.total_amount }}</p>
+            <p><strong>Status:</strong> <span class="status">{{ order.status }}</span></p>
+        <p>
+         <a href="{% url 'order_detail' order.id %}">View Details</a>
+        </p>
+
+            <h3>Products</h3>
+            <ul>
+                {% for item in order.items.all %}
+                <li>{{ item.product.name }} × {{ item.quantity }} — ₹{{ item.price }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% empty %}
+        <p>No orders found yet.</p>
+        {% endfor %}
+    </div>
+</body>
+</html>
